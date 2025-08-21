@@ -1,10 +1,27 @@
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq_web
+#  rabbitmq:
+#    image: rabbitmq:3-management
+#    container_name: rabbitmq_web
+#    ports:
+#      - "5672:5672"    # AMQP protocol port
+#      - "15672:15672"  # Management UI port
+#    volumes:
+#      - ./services/rabbitmq_data:/var/lib/rabbitmq
+#    restart: unless-stopped
+  playwright-server:
+    container_name: playwright-server
+    image: mcr.microsoft.com/playwright:v1.54.0-noble
     ports:
-      - "5672:5672"    # AMQP protocol port
-      - "15672:15672"  # Management UI port
+      - "3000:3000"
+    working_dir: /home/pwuser
+    user: pwuser
+    command: /bin/sh -c "npx -y playwright@1.54.0 run-server --port 3000 --host 0.0.0.0"
+    restart: "no"
+  parser:
+    container_name: parser
+    build: ./parser
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8002
     volumes:
-      - ./services/rabbitmq_data:/var/lib/rabbitmq
-    restart: unless-stopped
+      - ./parser/:/usr/src/app/
+    ports:
+      - 8002:8002
