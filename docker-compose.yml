@@ -25,3 +25,8 @@ services:
       - ./parser/:/usr/src/app/
     ports:
       - 8002:8002
+#  web:
+#    container_name: watcher-web
+#    build: ./web
+#    ports:
+#      - 8080:8080
